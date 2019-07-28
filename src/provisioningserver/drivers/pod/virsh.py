@@ -115,6 +115,9 @@ DOM_TEMPLATE_AMD64 = dedent("""\
       <devices>
         <emulator>{emulator}</emulator>
         <controller type='pci' index='0' model='pci-root'/>
+        <controller type='scsi' index='0' model='virtio-scsi'>
+          <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
+        </controller>
         <controller type='virtio-serial' index='0'>
           <address type='pci' domain='0x0000'
             bus='0x00' slot='0x05' function='0x0'/>
@@ -908,7 +911,8 @@ class VirshSSH(pexpect.spawn):
         self.run([
             'attach-disk', domain, vol_path, device,
             '--driver', 'qemu', '--subdriver', 'qcow2',
-            '--targetbus', 'virtio', '--sourcetype',
+            '--discard', 'unmap', '--cache', 'none', '--io', 'native',
+            '--targetbus', 'scsi', '--sourcetype',
             'file', '--config', '--serial', serial])
 
     def get_network_list(self):
