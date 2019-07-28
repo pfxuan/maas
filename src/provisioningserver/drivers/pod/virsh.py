@@ -881,15 +881,15 @@ class VirshSSH(pexpect.spawn):
             disk, default_pool)
         if usable_pool is None:
             return None
-        volume = str(uuid4())
+        volume = str(uuid4()) + '.qcow2'
         if usable_pool_type == 'logical':
             self.run([
                 'vol-create-as', usable_pool, volume, str(disk.size),
-                '--format', 'raw'])
+                '--format', 'qcow2'])
         else:
             self.run([
                 'vol-create-as', usable_pool, volume, str(disk.size),
-                '--allocation', '0', '--format', 'raw'])
+                '--allocation', '0', '--format', 'qcow2'])
         return usable_pool, volume
 
     def delete_local_volume(self, pool, volume):
@@ -907,6 +907,7 @@ class VirshSSH(pexpect.spawn):
         serial = os.path.basename(vol_path)
         self.run([
             'attach-disk', domain, vol_path, device,
+            '--driver', 'qemu', '--subdriver', 'qcow2',
             '--targetbus', 'virtio', '--sourcetype',
             'file', '--config', '--serial', serial])
 
